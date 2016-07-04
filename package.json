@@ -1,0 +1,26 @@
+{
+  "name": "liri-node-app",
+  "version": "1.0.0",
+  "description": "RCB Week 10 Homework",
+  "main": "liri.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattbajorek/liri-node-app.git"
+  },
+  "keywords": [
+    "siri",
+    "clone"
+  ],
+  "author": "Matt Bajorek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mattbajorek/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/mattbajorek/liri-node-app#readme",
+  "dependencies": {
+    "twitter": "^1.3.0"
+  }
+}
