@@ -112,7 +112,7 @@ function omdbRequest() {
 	} else {
 		title = type;
 	}
-	var queryURL = 'http://www.omdbapi.com/?t=' + title + '&y=&plot=short&r=json';
+	var queryURL = 'http://www.omdbapi.com/?t=' + title + '&y=&plot=short&tomatoes=true&r=json';
 	request(queryURL, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 	  	logData('');
@@ -123,7 +123,7 @@ function omdbRequest() {
 	  		logData('Liri: Here is the OMDB search result for ' + type + ':', false, 'blue');
 	  	}
 	  	logData('--------------------------------------------------------------------------------', false, 'blue');
-	  	var data = JSON.parse(body);
+	  	var data = JSON.parse(body,2,null);
 	  	logData('');
 	    logData('Title: ' + data.Title, false, 'yellow');
 	    logData('Year: ' + data.Year);
@@ -132,6 +132,8 @@ function omdbRequest() {
 	    logData('Language: ' + data.Language);
 	    logData('Plot: ' + data.Plot);
 	    logData('Actors: ' + data.Actors);
+	    logData('Rotten Tomatoes Rating: ' + data.tomatoRating);
+	    logData('Website: ' + data.Website);
 	  }
 	});
 }
