@@ -4,6 +4,7 @@ var Twitter = require('twitter');
 var spotify = require('spotify');
 var request = require('request');
 var fs = require('fs');
+var chalk = require('chalk');
 
 // Initialize twitter client with keys
 var client = new Twitter({
@@ -34,11 +35,12 @@ function switchCases(passSelection, passQuery) {
 		case 'spotify-this-song': searchSpotify(passQuery); break;
 		case 'movie-this': omdbRequest(passQuery); break;
 		case 'do-what-it-says': followFile(); break;
+		case '-h': helpDoc(); break;
 		default:
 			logData('');
-			logData('--------------------------------------------------------------------------------');
-			logData('Liri: I did not understand your input. Please try again.');
-			logData('--------------------------------------------------------------------------------');
+			logData('--------------------------------------------------------------------------------', false, 'blue');
+			logData('Liri: I did not understand your input. Type node liri.js -h for help.', false, 'blue');
+			logData('--------------------------------------------------------------------------------', false, 'blue');
 	}
 }
 
@@ -48,13 +50,13 @@ function getTweets() {
 	client.get('statuses/user_timeline', params, function(error, tweets, response){
 	  if (!error) {
 	  	logData('');
-	  	logData('--------------------------------------------------------------------------------');
-	  	logData('Liri: Here are your most recent tweets:')
-	  	logData('--------------------------------------------------------------------------------');
+	  	logData('--------------------------------------------------------------------------------', false, 'blue');
+	  	logData('Liri: Here are your most recent tweets:', false, 'blue')
+	  	logData('--------------------------------------------------------------------------------', false, 'blue');
 	  	for (var i=0; i<tweets.length; i++) {
 	  		logData('');
-	  		logData('Tweet ' + (i+1) + ':');
-	  		logData(tweets[i].created_at);
+	  		logData('Tweet ' + (i+1) + ':', false, 'cyan');
+	  		logData(tweets[i].created_at, false, 'yellow');
 	    	logData(tweets[i].text);
 	  	}
 	  }
@@ -64,7 +66,7 @@ function getTweets() {
 // Search spotify
 function searchSpotify(passQuery) {
 	var params;
-	if (passQuery !== null) {
+	if (passQuery !== undefined) {
 		params = {type:'track', query:passQuery};
 	} else if (type === '') {
 		params = {type:'track', query:"what's my age again"};
@@ -77,18 +79,18 @@ function searchSpotify(passQuery) {
         return;
     }
     logData('');
-  	logData('--------------------------------------------------------------------------------');
+  	logData('--------------------------------------------------------------------------------', false, 'blue');
   	if (type === '') {
-  		logData('Liri: Here is the spotify search results:');
+  		logData('Liri: Here is the spotify search results:', false, 'blue');
   	} else {
-  		logData('Liri: Here is the spotify search results for ' + type + ':');
+  		logData('Liri: Here is the spotify search results for ' + type + ':', false, 'blue');
   	}
-  	logData('--------------------------------------------------------------------------------');
+  	logData('--------------------------------------------------------------------------------', false, 'blue');
     var search = data.tracks.items;
     for (var i=0; i<search.length; i++) {
 	  	logData('');
-	  	logData('Result ' + (i+1) + ':');
-	 		logData('Song title: ' + search[i].name);
+	  	logData('Result ' + (i+1) + ':', false, 'green');
+	 		logData('Song title: ' + search[i].name, false, 'magenta');
 	 		for (var j=0; j<search[i].artists.length; j++) {
 	 			if (search[i].artists.length === 1) {
 	 				logData('Artist: ' + search[i].artists[j].name);
@@ -114,16 +116,16 @@ function omdbRequest() {
 	request(queryURL, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 	  	logData('');
-	  	logData('--------------------------------------------------------------------------------');
+	  	logData('--------------------------------------------------------------------------------', false, 'blue');
 	  	if (type === '') {
-	  		logData('Liri: Here is the OMDB search result:');
+	  		logData('Liri: Here is the OMDB search result:', false, 'blue');
 	  	} else {
-	  		logData('Liri: Here is the OMDB search result for ' + type + ':');
+	  		logData('Liri: Here is the OMDB search result for ' + type + ':', false, 'blue');
 	  	}
-	  	logData('--------------------------------------------------------------------------------');
+	  	logData('--------------------------------------------------------------------------------', false, 'blue');
 	  	var data = JSON.parse(body);
 	  	logData('');
-	    logData('Title: ' + data.Title);
+	    logData('Title: ' + data.Title, false, 'yellow');
 	    logData('Year: ' + data.Year);
 	    logData('IMDB Rating: ' + data.Rated);
 	    logData('Country: ' + data.Country);
@@ -149,9 +151,25 @@ function followFile() {
 }
 
 // Log data
-function logData(log, printer) {
+function logData(log, printer, color) {
 	fs.appendFileSync('log.txt', log + '\r\n');
 	if (!printer) {
-		console.log(log);
+		if (color !== undefined) {
+			console.log(chalk[color](log));
+		} else {
+			console.log(log);
+		}
 	}
+}
+
+// Help documentation
+function helpDoc() {
+	logData('Usage: node liri.js [arguments]');
+	logData('');
+	logData('Options:');
+	logData('  my-tweets                             show last 20 tweets and when they were created');
+	logData("  spotify-this-song '<song name here>'  show the song name, artist(s), album, and preview URL");
+	logData("  movie-this '<movie name here>'        show the movie title, year, IMDB rating, country,");
+	logData('                                        language, plot and actors');
+	logData('  do-what-it-says                       reads random.txt with arguments separated by a comma');
 }
