@@ -19,8 +19,8 @@ var selection = process.argv[2];
 var type = process.argv.splice(3, process.argv.length-1).join(' ');
 
 // Log command
-logData('', true);
-logData('Command: node liri.js ' + selection + type, true);
+logData('', 'white', true);
+logData('Command: node liri.js ' + selection + type, 'white', true);
 
 // First run switch cases
 switchCases();
@@ -38,9 +38,9 @@ function switchCases(passSelection, passQuery) {
 		case '-h': helpDoc(); break;
 		default:
 			logData('');
-			logData('--------------------------------------------------------------------------------', false, 'blue');
-			logData('Liri: I did not understand your input. Type node liri.js -h for help.', false, 'blue');
-			logData('--------------------------------------------------------------------------------', false, 'blue');
+			logData('--------------------------------------------------------------------------------', 'blue');
+			logData('Liri: I did not understand your input. Type node liri.js -h for help.', 'blue');
+			logData('--------------------------------------------------------------------------------', 'blue');
 	}
 }
 
@@ -50,15 +50,17 @@ function getTweets() {
 	client.get('statuses/user_timeline', params, function(error, tweets, response){
 	  if (!error) {
 	  	logData('');
-	  	logData('--------------------------------------------------------------------------------', false, 'blue');
-	  	logData('Liri: Here are your most recent tweets:', false, 'blue')
-	  	logData('--------------------------------------------------------------------------------', false, 'blue');
+	  	logData('--------------------------------------------------------------------------------', 'blue');
+	  	logData('Liri: Here are your most recent tweets:', 'blue')
+	  	logData('--------------------------------------------------------------------------------', 'blue');
 	  	for (var i=0; i<tweets.length; i++) {
 	  		logData('');
-	  		logData('Tweet ' + (i+1) + ':', false, 'cyan');
-	  		logData(tweets[i].created_at, false, 'yellow');
+	  		logData('Tweet ' + (i+1) + ':', 'cyan');
+	  		logData(tweets[i].created_at, 'yellow');
 	    	logData(tweets[i].text);
 	  	}
+	  } else {
+	  	console.log(error)
 	  }
 	});
 }
@@ -79,18 +81,18 @@ function searchSpotify(passQuery) {
         return;
     }
     logData('');
-  	logData('--------------------------------------------------------------------------------', false, 'blue');
+  	logData('--------------------------------------------------------------------------------', 'blue');
   	if (type === '') {
-  		logData('Liri: Here is the spotify search results:', false, 'blue');
+  		logData('Liri: Here is the spotify search results:', 'blue');
   	} else {
-  		logData('Liri: Here is the spotify search results for ' + type + ':', false, 'blue');
+  		logData('Liri: Here is the spotify search results for ' + type + ':', 'blue');
   	}
-  	logData('--------------------------------------------------------------------------------', false, 'blue');
+  	logData('--------------------------------------------------------------------------------', 'blue');
     var search = data.tracks.items;
     for (var i=0; i<search.length; i++) {
 	  	logData('');
-	  	logData('Result ' + (i+1) + ':', false, 'green');
-	 		logData('Song title: ' + search[i].name, false, 'magenta');
+	  	logData('Result ' + (i+1) + ':', 'green');
+	 		logData('Song title: ' + search[i].name, 'magenta');
 	 		for (var j=0; j<search[i].artists.length; j++) {
 	 			if (search[i].artists.length === 1) {
 	 				logData('Artist: ' + search[i].artists[j].name);
@@ -116,16 +118,16 @@ function omdbRequest() {
 	request(queryURL, function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 	  	logData('');
-	  	logData('--------------------------------------------------------------------------------', false, 'blue');
+	  	logData('--------------------------------------------------------------------------------', 'blue');
 	  	if (type === '') {
-	  		logData('Liri: Here is the OMDB search result:', false, 'blue');
+	  		logData('Liri: Here is the OMDB search result:', 'blue');
 	  	} else {
-	  		logData('Liri: Here is the OMDB search result for ' + type + ':', false, 'blue');
+	  		logData('Liri: Here is the OMDB search result for ' + type + ':', 'blue');
 	  	}
-	  	logData('--------------------------------------------------------------------------------', false, 'blue');
+	  	logData('--------------------------------------------------------------------------------', 'blue');
 	  	var data = JSON.parse(body,2,null);
 	  	logData('');
-	    logData('Title: ' + data.Title, false, 'yellow');
+	    logData('Title: ' + data.Title,'yellow');
 	    logData('Year: ' + data.Year);
 	    logData('IMDB Rating: ' + data.Rated);
 	    logData('Country: ' + data.Country);
@@ -153,7 +155,7 @@ function followFile() {
 }
 
 // Log data
-function logData(log, printer, color) {
+function logData(log, color, printer) {
 	fs.appendFileSync('log.txt', log + '\r\n');
 	if (!printer) {
 		if (color !== undefined) {
